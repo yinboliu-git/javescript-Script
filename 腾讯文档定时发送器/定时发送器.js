@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         自动发放腾讯文档
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  自动发放腾讯文档，解决班级表格填写问题。
 // @author       ybliu
 // @supportURL   https://github.com/
@@ -46,59 +46,55 @@
         }
 
         function twos() { // 打开sheet表
-            var name_id = document.querySelector("#header-top > div.left-container > div.dui-trigger.dui-tooltip.pc-header-title.dui-tooltip-wrapper > div > div > div > input");
-            var sheet_name_txt = document.querySelector("#header-top > div.left-container > div.dui-trigger.dui-tooltip.pc-header-title.dui-tooltip-wrapper > div > div > div > span");
+            var name_id = document.getElementsByClassName("title-container")[0].getElementsByTagName("input")[0];
             var d = new Date();
             var str = '';
             str += d.getFullYear() + '年'; //获取当前年份
             str += d.getMonth() + 1 + '月'; //获取当前月份（0——11）
             str += d.getDate() + '日';
-            
+
             if( name_id.value.indexOf(model_name)==-1){
                 console.log("名字不匹配，不分享");
                 return;
             }
             else{
                 console.log("匹配成功..");
-            
+
             }
-
-            sheet_name_txt.innerText = str+model_name;
-            console.log(sheet_name_txt.textContent);
-
-            name_id.value = sheet_name_txt.textContent;  //表格重命名
             console.log(name_id.value);
             var share_time = 2000;
             if(rename == 'yes'){
-                alert( "请重命名" + sheet_name_txt.textContent);
-                share_time = 1000 * 30; // 30S
+                alert( "请重命名:" +str + model_name);
+                share_time = 1000 * 15; // 15S
 
             }
 
             function share_step() { // 点击分享
-                var share_id = document.querySelector("#header-top > div.right-container > button > div");
+                console.log("点击分享");
+                var share_id = document.getElementsByClassName("dui-button-container")[0].parentNode;
                 share_id.click();
 
                 function edit_all() { // 点击“所有人可编辑”
-                    var edit_id = document.querySelector("#doc-sharebox-container > div > div.content-dialog-container > div > div.content-dialog-content > div:nth-child(2) > div:nth-child(2) > ul > li:nth-child(4) > span");
+                    var edit_id = document.getElementsByClassName("permission-list")[0].children[3].getElementsByTagName("span")[0];
                     edit_id.click();
 
                     function QQ_share() { // 点击 通过QQ分享
-                        var QQ_id = document.querySelector("#doc-sharebox-container > div > div.content-dialog-container > div > div.content-dialog-content > div:nth-child(4) > div > div:nth-child(2) > div:nth-child(1) > div.auth-icon.auth-icon-qq");
+                        var QQ_id = document.getElementsByClassName("auth-icon auth-icon-qq")[0];
                         QQ_id.click();
 
                         function group_all_func() {  // 点击 群聊
-                            var group_all = document.querySelector("#FriendSelectorDialog > div > div.selector_sidebar > div.selector_buddytree > div > div > div:nth-child(2) > div > span.triangle");
+                            var group_all = document.getElementsByClassName("buddygroupcontainer")[1].getElementsByClassName("triangle")[0];
                             group_all.click();
 
                                             var top_value = 0;
                 var number = null;
                 let time_id = window.setInterval(function () {
-                    var scroll_div_id = document.querySelector("#FriendSelectorDialog > div > div.selector_sidebar > div.selector_buddytree > div");
-                    var father_div = document.querySelector("#FriendSelectorDialog > div > div.selector_sidebar > div.selector_buddytree > div > div");
+                    var scroll_div_id = document.getElementsByClassName("virtual_list_scrollbar")[0];
+                    // document.querySelector("#FriendSelectorDialog > div > div.selector_sidebar > div.selector_buddytree > div")
+                    var father_div = scroll_div_id.children[0];
                     var list_div = father_div.childNodes;
-                    for (var i = 3; i < list_div.length; i++) { // 遍历所有群名
-                        var div_one = document.querySelector("#FriendSelectorDialog > div > div.selector_sidebar > div.selector_buddytree > div > div > div:nth-child(" + i + ") > ul > li > div > div.user-unit-name-outer-container.user-unit-inline-block > div");
+                    for (var i = 2; i < list_div.length; i++) { // 遍历所有群名
+                        var div_one = father_div.children[i].getElementsByClassName("user-unit-name-inner-container")[0];
                         var div_inner = div_one.innerText;
                         console.log(div_inner);
                         var a_str = input_user_name.toString();
@@ -110,7 +106,7 @@
                             console.log("清除时间...");
                             window.setTimeout(function () { // 点击 确定提交按钮
                                 console.log("执行submit_id");
-                                var submit_id = document.querySelector("#FriendSelectorDialog > div > div.txdoc-us-selected > div > button");
+                                var submit_id = document.getElementsByClassName("txdoc-us-selected-finish-btn")[0];
                                 submit_id.click();
                             }, 2000);
                             break;
